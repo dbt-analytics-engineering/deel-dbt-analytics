@@ -2,11 +2,14 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'deel'
-version: '1.0.0'
+name: deel
+
+config-version: 2
+
+require-dbt-version: ">=1.8.1"
 
 # This setting configures which "profile" dbt uses for this project.
-profile: 'deel'
+profile: deel
 
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be

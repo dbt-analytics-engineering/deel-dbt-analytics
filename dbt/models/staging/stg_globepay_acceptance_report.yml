@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: stg_globepay_acceptance_report
+    description: |
+      ##### Overview
+
+      Staging model showing list of Globepay transactions and their attributes.
+
+      ##### Granularity
+
+      One row per external_ref.
+
+    columns:
+      - name: external_ref
+        tests:
+          - not_null
+          - unique
+      - name: status
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true','false']
+              quote: false
+      - name: source
+        tests:
+          - not_null
+          - accepted_values: 
+              values: ['GLOBALPAY']
+      - name: ref
+        tests:
+          - not_null
+          - unique
+      - name: date_time
+        tests:
+          - not_null
+      - name: state
+        tests:
+          - not_null
+          - accepted_values: 
+              values: ['ACCEPTED','DECLINED']
+      - name: cvv_provided
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true','false']
+              quote: false
+      - name: amount
+        tests:
+          - not_null
+      - name: country
+        tests:
+          - not_null
+      - name: currency
+        tests:
+          - not_null
+      - name: rates
+        tests:
+          - not_null

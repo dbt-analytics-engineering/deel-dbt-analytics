@@ -1,0 +1,88 @@
+version: 2
+
+seeds:
+  - name: source_globepay_acceptance_report
+    config:
+      column_types:
+        external_ref: string
+        status: boolean
+        source: string
+        ref: string
+        date_time: string
+        state: string
+        cvv_provided: boolean
+        amount: numeric
+        country: string
+        currency: string
+        rates: json
+    description: |
+      ##### Overview
+
+      Source data showing list of Globepay transactions and their attributes.
+
+      ##### Granularity
+
+      One row per external_ref.
+
+    columns:
+      - name: external_ref
+        # description: "{{ doc('column_desriptions.external_ref') }}"
+        tests:
+          - not_null
+          - unique
+      - name: status
+        # description: "{{ doc('status') }}"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true','false']
+              quote: false
+      - name: source
+        # description: "{{ doc('source') }}"
+        tests:
+          - not_null
+          - accepted_values: 
+              values: ['GLOBALPAY']
+      - name: ref
+        # description: "{{ doc('ref') }}"
+        tests:
+          - not_null
+          - unique
+      - name: date_time
+        # description: "{{ doc('date_time') }}"
+        tests:
+          - not_null
+      - name: state
+        # description: "{{ doc('state') }}"
+        tests:
+          - not_null
+          - accepted_values: 
+              values: ['ACCEPTED','DECLINED']
+      - name: cvv_provided
+        # description: "{{ doc('cvv_provided') }}"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true','false']
+              quote: false
+      - name: amount
+        # description: "{{ doc('amount') }}"
+        tests:
+          - not_null
+      - name: country
+        # description: "{{ doc('country') }}"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['US','MX','UK','FR','CA','AE']
+      - name: currency
+        # description: "{{ doc('currency') }}"
+        tests:
+          - not_null
+          - accepted_values: 
+              values: ['USD','MXN','GBP','EUR','CAD']
+      - name: rates
+        # description: "{{ doc('rates') }}"
+        tests:
+          - not_null
+

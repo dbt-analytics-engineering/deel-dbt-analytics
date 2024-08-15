@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: analytics_globepay_transactions
+    description: |
+      ##### Overview
+
+      Analytics (mart layer) model monthly breakdown of Globepay transaction metrics per country.
+
+      ##### Granularity
+
+      One row per transaction_month,country.
+
+    tests:
+    - dbt_utils.unique_combination_of_columns:
+        combination_of_columns:
+          - transaction_month
+          - country
+
+    columns:
+      - name: transaction_month
+        description: The external unique identifier for a transaction.
+        tests:
+            - not_null
+      - name: country
+        description: The two-character ISO country code of the card.
+        tests:
+          - not_null
+      - name: declined_amount
+        description: The sum of declined transaction amount in USD.
+        tests:
+          - not_null
+      - name: accepted_amount
+        description: The sum of accepted transaction amount in USD.
+        tests:
+          - not_null
+      - name: accepted_transactions
+        description: The number of accepted transactions.
+        tests:
+          - not_null
+      - name: declined_transactions
+        description: The number of declined transactions.
+        tests:
+          - not_null
+      - name: chargeback_count
+        description: The number of transactions which include a chargeback.
+        tests:
+          - not_null
+      - name: no_chargeback_count
+        description: The number of transactions which do not include a chargeback.
+        tests:
+          - not_null
+      - name: usd_amount
+        description: The amount that has been charged from the card in USD.
+        tests:
+          - not_null
+      - name: total_transactions
+        description: The number of transactions.
+        tests:
+          - not_null
