@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: stg_globepay_chargeback_report
+    description: |
+      ##### Overview
+
+      Staging model showing list of Globepay transactions, including chargeback data.
+
+      ##### Granularity
+
+      One row per external_ref.
+
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          compare_model: ref("stg_globepay_acceptance_report")
+
+    columns:
+      - name: external_ref
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('stg_globepay_chargeback_report')
+              field: external_ref
+      - name: status
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true','false']
+              quote: false
+      - name: source
+        tests:
+          - not_null
+          - accepted_values: 
+              values: ['GLOBALPAY']
+      - name: chargeback
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true','false']
+              quote: false
+        

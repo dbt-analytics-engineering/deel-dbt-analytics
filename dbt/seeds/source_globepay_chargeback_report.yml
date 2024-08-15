@@ -1,0 +1,51 @@
+version: 2
+
+seeds:
+  - name: source_globepay_chargeback_report
+    config:
+      column_types:
+        external_ref: string
+        status: boolean
+        source: string
+        chargeback: boolean
+    description: |
+      ##### Overview
+
+       Source data showing list of Globepay transactions, including chargeback data.
+
+      ##### Granularity
+
+      One row per external_ref.
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          compare_model: ref("source_globepay_acceptance_report")
+
+    columns:
+      - name: external_ref
+        # description: "{{ doc('external_ref') }}"
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('source_globepay_acceptance_report')
+              field: external_ref
+      - name: status
+        # description: "{{ doc('status') }}"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true','false']
+              quote: false
+      - name: source
+        # description: "{{ doc('source') }}"
+        tests:
+          - not_null
+          - accepted_values: 
+              values: ['GLOBALPAY']
+      - name: chargeback
+        # description: "{{ doc('chargeback') }}"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true','false']
+              quote: false
