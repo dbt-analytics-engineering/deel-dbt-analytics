@@ -53,7 +53,7 @@ Macros can be used to create functions and templates for elements you intend to 
 
 The above question may be answered using the `analytics_globepay_transactions`. The decision was made to group the metrics by month. The model may be easily amended to return the data at daily, weekly or annually. The following query is used to return the answer for the acceptance rate per month:
 
-'''
+```
 select 
       transaction_month, 
       sum(accepted_transactions) as accepted_transactions, 
@@ -63,7 +63,7 @@ from {{ ref('analytics_globepay_transactions') }}
 group by transaction_month
 order by transaction_month
 ;
-'''
+```
 
 See results below.
 transaction_month	accepted_transactions	total_transactions	acceptance_rate
