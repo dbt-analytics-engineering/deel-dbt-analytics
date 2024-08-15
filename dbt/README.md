@@ -66,6 +66,8 @@ order by transaction_month
 ```
 
 See results below.
+
+```
 transaction_month	accepted_transactions	total_transactions	acceptance_rate
 2019-01-01 00:00:00.000000 UTC	647	930	0.7
 2019-02-01 00:00:00.000000 UTC	589	840	0.7
@@ -73,12 +75,13 @@ transaction_month	accepted_transactions	total_transactions	acceptance_rate
 2019-04-01 00:00:00.000000 UTC	610	900	0.68
 2019-05-01 00:00:00.000000 UTC	645	930	0.69
 2019-06-01 00:00:00.000000 UTC	645	900	0.72
+```
 
 ### List the countries where the amount of declined transactions went over $25M
 
 The following query was used to return the results:
 
-'''
+```
 select 
       country,
       sum(declined_amount) as declined_amount
@@ -86,13 +89,16 @@ from {{ ref('analytics_globepay_transactions') }}
 group by country
 having declined_amount > 25000000
 ;
-'''
+```
 
 See results below.
+
+```
 country	declined_amount
 CA	25583266.66
 AE	26335152.43
 US	25125669.78
+```
 
 ### 3. Which transactions are missing chargeback data?
 
@@ -102,12 +108,12 @@ This section was tackled with multiple approaches due to my understanding of the
 
 This can be answered using the following query. 
 
-'''
+```
 select external_ref
 from {{ ref('base_globepay_transactions') }}
 where chargeback is null
 ;
-'''
+```
 
 The above query returns 0 rows as all the transactions as all transactions have either a TRUE or FALSE value.
 
@@ -115,12 +121,12 @@ The above query returns 0 rows as all the transactions as all transactions have 
 
 This can be answered using the following query.
 
-'''
+```
 select external_ref
 from {{ ref('base_globepay_transactions') }}
 where not chargeback
 ;
-'''
+```
 
 This returned 5,207 rows of unique external_ref values. See image below.
 ![Alt text](image-1.png)
@@ -129,12 +135,12 @@ This returned 5,207 rows of unique external_ref values. See image below.
 
 This can be answered using the following query.
 
-'''
+```
 select 
       sum(total_transactions) - sum(no_chargeback_count) - sum(chargeback_count)
 from {{ ref('analytics_globepay_transactions') }}
 ;
-'''
+```
 
 This returned the value 0 which matches solution 1 as that also retuned no data.
 
@@ -142,11 +148,11 @@ This returned the value 0 which matches solution 1 as that also retuned no data.
 
 This can be answered using the following query.
 
-'''
+```
 select 
       sum(no_chargeback_count)
 from {{ ref('analytics_globepay_transactions') }}
 ;
-'''
+```
 
 This returned the value 5207 which matches the number of rows in solution 2.
