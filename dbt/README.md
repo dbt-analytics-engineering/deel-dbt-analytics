@@ -79,6 +79,8 @@ transaction_month	accepted_transactions	total_transactions	acceptance_rate
 
 ### List the countries where the amount of declined transactions went over $25M
 
+For this question, it was assumed that the results were only to be grouped by country and not to be filtered for a specific time period or any other attributes. 
+
 The following query was used to return the results:
 
 ```
