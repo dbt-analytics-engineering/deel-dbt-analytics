@@ -20,6 +20,40 @@ The model architecture consists of the following 4 layers:
 3. Base (intermediate) layer - this is where multiple staging layers may interact and businessor domain specific rules and logic may be inroduced.
 4. Analytics (mart) layer - this layer holds the final, business-facing models used for analyses and/or reporting.
 
+### Fraud Detection Feature (NEW)
+
+A fraud detection layer has been added to the project to identify potentially risky transactions. This feature includes:
+
+**Models:**
+- `fraud_risk_score` - Calculates individual risk scores for each transaction based on multiple fraud indicators
+- `fraud_alerts` - Daily aggregation of high-risk transactions for monitoring and alerting
+
+**Risk Factors:**
+1. **CVV Risk (40% weight)**: Transactions without CVV, especially large amounts relative to country average
+2. **Volume Risk (20% weight)**: Unusual transaction volume per country per day
+3. **Large Transaction Risk (20% weight)**: Large accepted transactions potentially indicating fraud
+4. **Amount Deviation Risk (20% weight)**: Transactions significantly above country average
+
+**Risk Levels:**
+- **HIGH** (>=0.7): Requires immediate review
+- **MEDIUM** (>=0.4): Monitor and review periodically
+- **LOW** (<0.4): Normal risk level
+
+**Sample Query to Find High-Risk Transactions:**
+```
+select 
+    external_ref,
+    country,
+    usd_amount,
+    cvv_provided,
+    risk_level,
+    overall_risk_score
+from {{ ref('fraud_risk_score') }}
+where risk_level = 'HIGH'
+order by overall_risk_score desc
+;
+```
+
 ### Lineage graph
 
 The below is a lineage graph of my dbt project.

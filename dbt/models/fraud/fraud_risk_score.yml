@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: fraud_risk_score
+    description: |
+      ##### Overview
+
+      Fraud detection model that calculates risk scores for each transaction based on multiple fraud indicators including CVV provision, transaction volume, amount patterns, and deviation from country averages.
+
+      ##### Granularity
+
+      One row per external_ref.
+
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          compare_model: ref("base_globepay_transactions")
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - external_ref
+
+    columns:
+      - name: external_ref
+        description: The external unique identifier for a transaction.
+        tests:
+          - not_null
+          - unique
+      - name: country
+        description: The two-character ISO country code of the card.
+        tests:
+          - not_null
+      - name: currency
+        description: The three-character ISO currency code.
+        tests:
+          - not_null
+      - name: amount
+        description: The original transaction amount.
+        tests:
+          - not_null
+      - name: usd_amount
+        description: The transaction amount converted to USD.
+        tests:
+          - not_null
+      - name: cvv_provided
+        description: Boolean value which indicates whether CVV was provided for a transaction.
+        tests:
+          - not_null
+      - name: state
+        description: The binary state of the transaction (ACCEPTED or DECLINED).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ACCEPTED', 'DECLINED']
+      - name: chargeback
+        description: Boolean value which indicates whether a transaction includes a chargeback.
+        tests:
+          - not_null
+      - name: date_time
+        description: The timestamp of a transaction.
+        tests:
+          - not_null
+      - name: ref
+        description: Internally generated unique identifier for a transaction.
+        tests:
+          - not_null
+      - name: transactions_today_by_country
+        description: Number of transactions for the same country on the same day.
+        tests:
+          - not_null
+      - name: avg_country_amount
+        description: Average transaction amount for the country.
+        tests:
+          - not_null
+      - name: avg_country_usd_amount
+        description: Average transaction amount in USD for the country.
+        tests:
+          - not_null
+      - name: cvv_risk_score
+        description: Risk score based on CVV provision and transaction amount (0.0-1.0).
+        tests:
+          - not_null
+      - name: volume_risk_score
+        description: Risk score based on transaction volume for the country (0.0-1.0).
+        tests:
+          - not_null
+      - name: large_transaction_risk_score
+        description: Risk score based on large accepted transactions (0.0-1.0).
+        tests:
+          - not_null
+      - name: amount_deviation_risk_score
+        description: Risk score based on deviation from country average (0.0-1.0).
+        tests:
+          - not_null
+      - name: overall_risk_score
+        description: Weighted average of all risk factors (0.0-1.0), higher is riskier.
+        tests:
+          - not_null
+      - name: risk_level
+        description: Categorization of risk: HIGH (>=0.7), MEDIUM (>=0.4), LOW (<0.4).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HIGH', 'MEDIUM', 'LOW']
