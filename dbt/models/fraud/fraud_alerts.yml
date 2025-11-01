@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: fraud_alerts
+    description: |
+      ##### Overview
+
+      Daily fraud alert summary aggregating high-risk transactions by country and risk level for monitoring and alerting purposes.
+
+      ##### Granularity
+
+      One row per alert_date, country, risk_level.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - alert_date
+            - country
+            - risk_level
+
+    columns:
+      - name: alert_date
+        description: Date of the alert (day-level granularity).
+        tests:
+          - not_null
+      - name: country
+        description: The two-character ISO country code of the card.
+        tests:
+          - not_null
+      - name: risk_level
+        description: Risk level categorization: HIGH, MEDIUM, or LOW.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HIGH', 'MEDIUM', 'LOW']
+      - name: transaction_count
+        description: Number of transactions for this risk level, country, and date.
+        tests:
+          - not_null
+      - name: total_usd_amount
+        description: Total USD amount for transactions in this group.
+        tests:
+          - not_null
+      - name: accepted_count
+        description: Number of accepted transactions in this group.
+        tests:
+          - not_null
+      - name: accepted_usd_amount
+        description: Total USD amount of accepted transactions in this group.
+        tests:
+          - not_null
+      - name: chargeback_count
+        description: Number of transactions with chargebacks in this group.
+        tests:
+          - not_null
+      - name: avg_risk_score
+        description: Average overall risk score for transactions in this group.
+        tests:
+          - not_null
+      - name: max_risk_score
+        description: Maximum overall risk score for transactions in this group.
+        tests:
+          - not_null
+      - name: no_cvv_count
+        description: Number of transactions without CVV in this group.
+        tests:
+          - not_null
+      - name: high_volume_count
+        description: Number of transactions on days with >50 transactions for the country.
+        tests:
+          - not_null
